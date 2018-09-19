@@ -43,7 +43,7 @@ progmem_syn.hex:
 	icebram -g 32 2048 > $@
 
 $(PLL):
-	icepll $(QUIET) -i $(FREQ_OSC) -o $(FREQ_PLL) -m -f $@
+	icepll -i $(FREQ_OSC) -o $(FREQ_PLL) | gawk -f pll.gawk > $@
 
 $(BLIF): $(YS) $(SRC) progmem_syn.hex defines.sv
 	yosys $(QUIET) $<
