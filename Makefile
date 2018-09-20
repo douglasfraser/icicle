@@ -32,9 +32,13 @@ all: $(BIN)
 clean:
 	$(RM) $(BLIF) $(ASC_SYN) $(ASC) $(BIN) $(PLL) $(TIME_RPT) $(STAT) progmem_syn.hex progmem.hex progmem.o start.o progmem defines.sv
 
-progmem.hex: progmem
+progmem.fill:
+	dd if=/dev/urandom of=$@ bs=4 count=2048
+
+progmem.hex: progmem progmem.fill
 	$(OBJCOPY) -O binary $< /dev/stdout \
-		| xxd -p -c 4 > $@
+		| dd of=progmem.fill conv=notrunc
+	xxd -p -c 4 progmem.fill $@
 
 progmem: progmem.o start.o progmem.lds
 	$(LD) $(LDFLAGS) -o $@ progmem.o start.o
